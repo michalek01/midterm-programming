@@ -1,5 +1,6 @@
 import time
 import random
+import matplotlib.pyplot as plt
 
 # =======================================================
 # DO NOT MODIFY THE ALGORITHM IMPLEMENTATIONS
@@ -28,27 +29,58 @@ def find_duplicates_fast(data):
 # YOUR TASK: FIX THE BENCHMARKING SCRIPT BELOW
 # =======================================================
 
-def flawed_benchmark():
+def benchmark():
     """
-    This benchmarking function contains several methodological errors.
-    Rewrite this function to properly and fairly compare the two algorithms to demonstrate their scaling behavior.
+    Properly benchmark the two algorithms across multiple input sizes.
     """
-    print("Running flawed benchmark...")
-    
-    n = 1000
-    
-    start_time = time.time()
-    data1 = [random.randint(i, 10000) for i in range(n)]
-    find_duplicates_slow(data1)
-    end_time = time.time()
-    print(f"Slow algorithm took: {end_time - start_time} seconds")
-    
-    start_time_2 = time.time()
-    data2 = [random.randint(i, 10000) for i in range(n)]
-    find_duplicates_fast(data2)
-    end_time_2 = time.time()
-    print(f"Fast algorithm took: {end_time_2 - start_time_2} seconds")
+    print("Running benchmark...")
 
+    sizes = [1000, 2000, 4000, 8000]
+
+    for n in sizes:
+        data = [random.randint(0, 10000) for _ in range(n)]
+
+        start_time = time.perf_counter()
+        find_duplicates_slow(data)
+        end_time = time.perf_counter()
+        slow_time = end_time - start_time
+
+        start_time = time.perf_counter()
+        find_duplicates_fast(data)
+        end_time = time.perf_counter()
+        fast_time = end_time - start_time
+
+        print(f"n = {n}")
+        print(f"Slow algorithm: {slow_time:.6f} seconds")
+        print()  # Add a blank line for better readability between different input sizes
+        print(f"Fast algorithm: {fast_time:.6f} seconds")
 
 if __name__ == "__main__":
-    flawed_benchmark()
+    benchmark()
+
+#plot benchmark results
+
+    sizes = [1000, 2000, 4000, 8000]
+    slow_times = []
+    fast_times = []
+
+    for n in sizes:
+        data = [random.randint(0, 10000) for _ in range(n)]
+
+        start_time = time.perf_counter()
+        find_duplicates_slow(data)
+        end_time = time.perf_counter()
+        slow_times.append(end_time - start_time)
+
+        start_time = time.perf_counter()
+        find_duplicates_fast(data)
+        end_time = time.perf_counter()
+        fast_times.append(end_time - start_time)
+
+    plt.plot(sizes, slow_times, label="Slow Algorithm")
+    plt.plot(sizes, fast_times, label="Fast Algorithm")
+    plt.xlabel("Input Size (n)")
+    plt.ylabel("Time (seconds)")
+    plt.title("Benchmark Results")
+    plt.legend()
+    plt.show()
